@@ -2,28 +2,56 @@ import React, { useState } from "react";
 import ReactDOM from "react-dom";
 import "./style.css";
 
-function Item(props) {
-  const [name, setName] = useState("Default Name");
-  const [price, setPrice] = useState(99.99);
+function AddPersonForm(props) {
+  const [person, setPerson] = useState("");
+
+  function handleChange(e) {
+    setPerson(e.target.value);
+  }
+
+  function handleSubmit(e) {
+    props.handleSubmit(person);
+    setPerson("");
+    e.preventDefault();
+  }
   return (
-    <div className="item">
-      <b>Name:</b>
-      {props.name}
-      <br />
-      <b>Price:</b>
-      {props.price}
-    </div>
-  );
-}
-function App() {
-  return (
-    <div>
-      <Item name="Cheese" price="4.99" />
-      <Item name="Bread" price="1.49" />
-      <Item name="Ice cream" price="24" />
-    </div>
+    <form onSubmit={handleSubmit}>
+      <input
+        type="text"
+        placeholder="Add new contact"
+        onChange={handleChange}
+        value={person}
+      />
+      <button type="submit">Add</button>
+    </form>
   );
 }
 
-const el = <App />;
+function PeopleList(props) {
+  const arr = props.data;
+  const peopleList = arr.map((name, index) => <li key={index}>{name}</li>);
+  return <ul>{peopleList}</ul>;
+}
+
+function ContactManager(props) {
+  const [contacts, setContacts] = useState(props.data);
+
+  function addPerson(name) {
+    setContacts([...contacts, name]);
+  }
+
+  return (
+    <div>
+      <AddPersonForm handleSubmit={addPerson} />
+      <PeopleList data={contacts} />
+    </div>
+  );
+}
+const contacts = ["Some Dude", "Funky Chick"];
+
+function App() {
+  return <div />;
+}
+
+const el = <ContactManager data={contacts} />;
 ReactDOM.render(el, document.getElementById("root"));
